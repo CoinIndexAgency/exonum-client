@@ -78,7 +78,14 @@ export function send (transactionEndpoint, explorerBasePath, data, signature, ty
           }
           throw new Error('Unexpected format of transaction explorer response.')
         }
-      })
+      }).catch(function(){
+          if (--count > 0) {
+            return new Promise((resolve) => {
+              setTimeout(resolve, timeout)
+            }).then(attempt)
+          }
+          throw new Error('Transaction has not been accepted to the blockchain.')
+      });
     })()
   })
 }
